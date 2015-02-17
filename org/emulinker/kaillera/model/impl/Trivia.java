@@ -287,8 +287,7 @@ public class Trivia implements Runnable {
 				}			
 				try{Thread.sleep(5000);}catch(Exception e){}
 				
-				
-				server.announce("<Unscramble> " + (questionTime/1000) + " seconds until the next question. Get ready for question " + (count + 1) + " of " + questions.size(), false, null);
+			
 				try{Thread.sleep(questionTime);}catch(Exception e){}
 
 				
