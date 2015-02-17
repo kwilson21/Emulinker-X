@@ -1,17 +1,6 @@
 package org.emulinker.kaillera.model.impl;
-import java.util.Random;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.io.*;
 import java.util.*;
+import java.io.*;
 
 public class Trivia implements Runnable {
 	private boolean exitThread = false;
@@ -28,11 +17,8 @@ public class Trivia implements Runnable {
 	private String ip_streak = "";
 	private int score_streak = 0;
 	private int questionTime= 10;
-	private int index;
-	private String unscrambledword;
-	private int temp;
-	private Scanner scan;
 	private int s;
+	
 	
 	ArrayList <Questions> questions = new ArrayList<Questions>();
 	ArrayList <Integer> questions_num = new ArrayList<Integer>();
@@ -97,14 +83,6 @@ public class Trivia implements Runnable {
 			this.answer = answer;
 		}
 		
-		public void setQuestion(String question){
-			this.question = question;
-		}
-		public void setAnswer(String answer){
-			this.answer = answer;
-		}
-
-			
 		public String getQuestion(){
 			return question;
 		}
@@ -118,7 +96,8 @@ public class Trivia implements Runnable {
 		this.server = server;
 		try
 		{
-        	server.announce("<Unscramble> " + "Loading EmuXScramble Words...", false, null);    
+        	server.announce("<Unscramble> " + "Loading EmuXScramble Words...", false, null);
+        	server.announce("<Unscramble> " + "Loading Previous Scores...", false, null);
 			File file = new File("wordlist.txt");
 			Scanner scan = new Scanner(file);
 			
@@ -134,17 +113,12 @@ public class Trivia implements Runnable {
 				{
 					unscramblewords.add(tempStr[j]);
 				}
-				index++;
-            	if (scan == null) 
-				{
-					scan.close();
-            	}
         	}
-		}
-		catch(Exception e)
-		{
-			server.announce("<Unscramble> Error loading words!", false, null);
-		}
+			scan.close();
+		
+
+		
+		
 			Random generator = new Random();
 			for (int j = 0; j <unscramblewords.size(); j++)
 			{
@@ -162,18 +136,56 @@ public class Trivia implements Runnable {
 			Questions tempQuestion = new Questions(scrambledword, unscramblewords.get(j).toString());
 			questions.add(tempQuestion);
 			questions_num.add(j);
+			
+        	//##################
+        	//######SCORES######
+        	//##################
+
+            InputStream ist = new FileInputStream("scores_scrambler.txt"); 
+            BufferedReader istream = new BufferedReader(new InputStreamReader(ist));
+            
+            String str = istream.readLine();//First Score         
+        	while(str != null){           	
+            	if(str.startsWith("ip:") || str.startsWith("IP:") || str.startsWith("Ip:") || str.startsWith("iP:")){
+            		String ip;
+            		String s;
+            		String n;
+            		
+            		ip = str.substring("ip:".length()).trim();
+            		str = istream.readLine();
+            		s = str.substring("s:".length()).trim();
+            		str = istream.readLine();
+            		n = str.substring("n:".length()).trim();
+            		
+            		scores.add(new Scores(n, ip, Integer.parseInt(s)));
+            	}
+            	str = istream.readLine();//New Score
         	}
-        	        server.announce("<Unscramble> " + questions.size() + " words have been loaded!", false, null);
-                        server.announce("<Unscramble> " + "EmuXUnscramble will begin in 10s!", false, null);
- 	}
+        	
+
+        	ist.close();
+        	}
+        	server.announce("<Unscramble> " + questions.size() + " words have been loaded!", false, null);
+        	server.announce("<Unscramble> " + scores.size() + " scores have been loaded!", false, null);
+        	server.announce("<Unscramble> " + "EmuXUnscramble will begin in 10s!", false, null);
+			}
+			
+    		catch(Exception e)
+    		{
+    			server.announce("<Unscramble> Error loading words!", false, null);
+    		}
+			
+        
+	}
 
 	
 	
 	public void run(){
 		int count = 0;
+		int temp;
 		Random generator = new Random();
 		
-		temp = generator.nextInt(questions.size() - 1);
+		temp = generator.nextInt(questions_num.size() - 1);
 		questions_count = (Integer)questions_num.get(temp);
 		questions_num.remove(temp);
 		try{Thread.sleep(10000);}catch(Exception e){}
@@ -185,11 +197,7 @@ public class Trivia implements Runnable {
 					if(count % 15 == 0){
 						saveScores(false);
 						displayHighScores(false);
-					}
-					
-
-					
-					
+					}															
 					newQuestion = false;
 					hint1 = true;
 					hint2 = false;
@@ -258,12 +266,12 @@ public class Trivia implements Runnable {
 				}
 				
 				if(!answered){
-                                        Questions tempquestion2 = (Questions)questions.get(questions_count);
+                                        questions.get(questions_count);
 					server.announce("<Unscramble> " + "Time's up! The answer is: " + questions.get(questions_count).getAnswer(), false, null);
 				}				
 				
 				//Find questions not repeated
-				if(questions.size() == 1){
+				if(questions_num.size() == 1){
 					questions_count = (Integer)questions_num.get(0);
 					questions_num.clear();
 					count = 0;
@@ -273,13 +281,14 @@ public class Trivia implements Runnable {
 					}
 				}
 				else{
-					temp = generator.nextInt(questions.size() - 1);
+					temp = generator.nextInt(questions_num.size() - 1);
 					questions_count = questions_num.get(temp);
 					questions_num.remove(temp);
 				}			
 				try{Thread.sleep(5000);}catch(Exception e){}
 				
 				
+				server.announce("<Unscramble> " + (questionTime/1000) + " seconds until the next question. Get ready for question " + (count + 1) + " of " + questions.size(), false, null);
 				try{Thread.sleep(questionTime);}catch(Exception e){}
 
 				
@@ -384,7 +393,7 @@ public class Trivia implements Runnable {
 					s++;
 					tempscore.setScore(s);
 				}
-				Questions tempquestion2 = (Questions)questions.get(questions_count);
+				questions.get(questions_count);
 				server.announce("<Unscramble> Congratulations " + nick + "! You have answered the question correctly with (" + answer + ")! Your score is: " +s, false, null);
 				return;
 			}
