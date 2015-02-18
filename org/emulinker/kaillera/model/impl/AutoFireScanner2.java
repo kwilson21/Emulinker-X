@@ -99,6 +99,8 @@ public class AutoFireScanner2 implements AutoFireDetector
 	protected class ScanningJob implements Runnable
 	{
 		private KailleraUser			user;
+		private int						playerNumber;
+		
 		private int 					bytesPerAction 	= -1;
 		private int 					sizeLimit; 
 		private int 					bufferSize 		= 5;
@@ -115,18 +117,23 @@ public class AutoFireScanner2 implements AutoFireDetector
 		protected ScanningJob(KailleraUser user, int playerNumber)
 		{
 			this.user = user;
+			this.playerNumber = playerNumber;
+			
 			sizeLimit = ((maxDelay+1)*minReps*5);
 			buffer = new byte[bufferSize][sizeLimit];
 		}
 	
 		protected synchronized void addData(byte[] data, int bytesPerAction)
 		{
-			if((pos+data.length)>=sizeLimit)
+			if((pos + data.length) >= sizeLimit)
 			{
 				int firstSize = (sizeLimit-pos);
 //				log.debug("firstSize="+firstSize);
 				System.arraycopy(data, 0, buffer[tail], pos, firstSize);
-				tail = ((tail + 1) % bufferSize);
+				//tail = ((tail + 1) % bufferSize);
+				tail++;
+				if(tail == bufferSize)
+					tail = 0;
 //				log.debug("tail="+tail);
 				System.arraycopy(data, firstSize, buffer[tail], 0, (data.length-firstSize));
 				pos = (data.length-firstSize);
@@ -169,7 +176,11 @@ public class AutoFireScanner2 implements AutoFireDetector
 					{
 						data = buffer[head];
 //						log.debug("Scanning " + data.length + " bytes from buffer position " + head);
-						head = ((head+1) % bufferSize);
+						//head = ((head+1) % bufferSize);
+						head++;
+						if(head == bufferSize)
+							head = 0;
+						
 						size--;
 					}
 		
@@ -178,11 +189,13 @@ public class AutoFireScanner2 implements AutoFireDetector
 					byte[] thisAction = new byte[bytesPerAction];
 					byte[] lastAction = new byte[bytesPerAction];
 					byte[] actionA = new byte[bytesPerAction];
+					int aPos = 0;
 					int aCount = 0;
 					int aSequence = 0;
 					int lastASequence = 0;
 					int aSequenceCount = 0;
 					byte[] actionB = new byte[bytesPerAction];
+					int bPos = 0;
 					int bCount = 0;
 					int bSequence = 0;
 					int lastBSequence = 0;
@@ -196,6 +209,7 @@ public class AutoFireScanner2 implements AutoFireDetector
 						if(aCount == 0)
 						{
 							System.arraycopy(thisAction, 0, actionA, 0, bytesPerAction);
+							aPos = i;
 							aCount = 1;
 							aSequence = 1;
 						}
@@ -217,6 +231,7 @@ public class AutoFireScanner2 implements AutoFireDetector
 						else if(bCount == 0)
 						{
 							System.arraycopy(thisAction, 0, actionB, 0, bytesPerAction);
+							bPos = i;
 							bCount = 1;
 							bSequence = 1;
 						}
@@ -257,7 +272,7 @@ public class AutoFireScanner2 implements AutoFireDetector
 						if(aSequenceCount >= minReps && bSequenceCount >= minReps && !stopFlag)
 						{
 							KailleraGameImpl gameImpl = (KailleraGameImpl) game;
-							gameImpl.announce(EmuLang.getString("AutoFireScanner2.AutoFireDetected", new Object[]{this.user.getName()}), (KailleraUser)null); //$NON-NLS-1$
+							gameImpl.announce(EmuLang.getString("AutoFireScanner2.AutoFireDetected", user.getName()), null); //$NON-NLS-1$
 							log.info("AUTOUSERDUMP\t" + EmuUtil.DATE_FORMAT.format(gameImpl.getStartDate()) + "\t" + (aSequence < bSequence ? aSequence : bSequence) + "\t" + game.getID() + "\t" + game.getRomName() + "\t" + user.getName() + "\t" + user.getSocketAddress().getAddress().getHostAddress()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 //							log.debug("thisAction=" + EmuUtil.bytesToHex(thisAction) + " actionA=" + EmuUtil.bytesToHex(actionA) + " aCount=" + aCount + " actionB=" + EmuUtil.bytesToHex(actionB) + " bCount=" + bCount + " aSequence=" + aSequence + " aSequenceCount=" + aSequenceCount + " bSequence=" + bSequence + " bSequenceCount=" + bSequenceCount);
 							break;
