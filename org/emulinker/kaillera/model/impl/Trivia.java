@@ -108,11 +108,12 @@ public class Trivia implements Runnable {
 			*/
 			while (scan.hasNext()) 
 			{							// read line by line
-				String[] tempStr = scan.nextLine().split(" ");
+				String[] tempStr = scan.nextLine().replaceAll(" ", ",").toLowerCase().replaceAll("_", " ").toLowerCase().split(",");
 				for(int j = 0; j < tempStr.length; j++)
 				{
 					unscramblewords.add(tempStr[j]);
 				}
+				 
         	}
 			scan.close();
 		
