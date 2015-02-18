@@ -354,7 +354,7 @@ public class ChatAction implements V086Action, V086ServerEventHandler
 		                bufferedReader = new BufferedReader(new FileReader(file));
 		                String string6 = null;
 		                while ((string6 = bufferedReader.readLine()) != null) {
-		                    stringBuffer.append(string6).append(bufferedReader.readLine());
+		                    stringBuffer.append(string6).append(System.getProperty("line.separator"));
 		                }
 		            }
 		             catch(Exception e){}
