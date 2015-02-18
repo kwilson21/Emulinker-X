@@ -6,7 +6,6 @@ import org.emulinker.kaillera.model.impl.PlayerTimeoutException;
 public class PlayerActionQueue {
    private int gameBufferSize;
    private int gameTimeoutMillis;
-   private boolean capture;
    private int thisPlayerNumber;
    private KailleraUserImpl thisPlayer;
    private boolean synched = false;
@@ -20,7 +19,6 @@ public class PlayerActionQueue {
       this.thisPlayer = player;
       this.gameBufferSize = gameBufferSize;
       this.gameTimeoutMillis = gameTimeoutMillis;
-      this.capture = capture;
       this.array = new byte[gameBufferSize];
       this.heads = new int[numPlayers];
    }

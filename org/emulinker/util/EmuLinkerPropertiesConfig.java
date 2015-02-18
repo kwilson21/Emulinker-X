@@ -1,7 +1,6 @@
 package org.emulinker.util;
 
 import org.apache.commons.configuration.*;
-import org.apache.commons.logging.*;
 
 public class EmuLinkerPropertiesConfig extends PropertiesConfiguration
 {

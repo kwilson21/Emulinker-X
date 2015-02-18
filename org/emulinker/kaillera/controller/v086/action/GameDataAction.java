@@ -17,7 +17,6 @@ import org.emulinker.kaillera.model.exception.GameDataException;
 
 public class GameDataAction implements V086Action, V086GameEventHandler {
    private static Log log = LogFactory.getLog(GameDataAction.class);
-   private static final String desc = "GameDataAction";
    private static GameDataAction singleton = new GameDataAction();
    private static Log keyLog = LogFactory.getLog("KEYLOG");
    private int actionCount = 0;

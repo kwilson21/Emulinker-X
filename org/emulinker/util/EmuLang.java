@@ -4,11 +4,8 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import java.lang.reflect.*;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.emulinker.kaillera.pico.PicoStarter;
 
 public class EmuLang
 {

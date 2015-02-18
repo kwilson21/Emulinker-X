@@ -25,7 +25,6 @@ import org.emulinker.kaillera.model.impl.KailleraUserImpl;
 public class GameChatAction implements V086Action, V086GameEventHandler {
    public static final String ADMIN_COMMAND_ESCAPE_STRING = "/";
    private static Log log = LogFactory.getLog(GameChatAction.class);
-   private static final String desc = "GameChatAction";
    public static final byte STATUS_IDLE = 1;
    private static GameChatAction singleton = new GameChatAction();
    private int actionCount = 0;

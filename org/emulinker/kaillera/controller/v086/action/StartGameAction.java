@@ -18,7 +18,6 @@ import org.emulinker.kaillera.model.exception.StartGameException;
 
 public class StartGameAction implements V086Action, V086GameEventHandler {
    private static Log log = LogFactory.getLog(StartGameAction.class);
-   private static final String desc = "StartGameAction";
    private static StartGameAction singleton = new StartGameAction();
    private int actionCount = 0;
    private int handledCount = 0;

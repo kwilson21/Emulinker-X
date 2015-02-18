@@ -24,7 +24,6 @@ import org.emulinker.util.EmuLang;
 
 public class JoinGameAction implements V086Action, V086GameEventHandler {
    private static Log log = LogFactory.getLog(JoinGameAction.class);
-   private static final String desc = "JoinGameAction";
    private static JoinGameAction singleton = new JoinGameAction();
    private int actionCount = 0;
    private int handledCount = 0;

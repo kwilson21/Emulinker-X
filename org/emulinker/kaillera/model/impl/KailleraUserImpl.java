@@ -44,7 +44,6 @@ public final class KailleraUserImpl implements KailleraUser, Executable
 	private long							lastActivity;
 	private long							lastKeepAlive;
 	private long							lastChatTime;
-	private long							lastGameChatTime;
 	private long							lastCreateGameTime;
 	private long							lastTimeout;
 	
@@ -64,7 +63,6 @@ public final class KailleraUserImpl implements KailleraUser, Executable
 	private boolean                         mute = false;
 
 	private List<byte[]>			        lostInput		= new ArrayList<byte[]>();
-	private boolean							hasData = false;
 	private List<String>			        ignoredUsers		= new ArrayList<String>();
 
 	private long							gameDataErrorTime	= -1;
@@ -621,10 +619,6 @@ public final class KailleraUserImpl implements KailleraUser, Executable
 			log.warn(this + " gamechat denied: Silenced: " + message);
 			game.announce("You are currently silenced!", this);
 			return;
-		}
-		
-		if(this == null){
-			throw new GameChatException("You don't exist!"); //$NON-NLS-1$
 		}
 		
 		game.chat(this, message);

@@ -13,8 +13,6 @@ public class GameDataQueue
 	private PlayerDataQueue[]	playerQueues;
 	private int					timeoutMillis;
 	private int					retries;
-	private boolean				gameDesynched	= false;
-
 	public GameDataQueue(int gameID, int numPlayers, int timeoutMillis, int retries)
 	{
 		this.gameID = gameID;
@@ -49,7 +47,6 @@ public class GameDataQueue
 
 	public void setGameDesynched()
 	{
-		gameDesynched = true;
 	}
 
 	public void addData(int playerNumber, byte data[])
@@ -71,7 +68,6 @@ public class GameDataQueue
 
 	private class PlayerDataQueue
 	{
-		private int							thisPlayerNumber;
 		private CircularBlockingByteQueue[]	queues;
 		private int							lastI			= 0;
 		private int							lastJ			= 0;
@@ -80,7 +76,6 @@ public class GameDataQueue
 
 		private PlayerDataQueue(int playerNumber)
 		{
-			this.thisPlayerNumber = playerNumber;
 			queues = new CircularBlockingByteQueue[numPlayers];
 			for (int i = 0; i < queues.length; i++)
 				queues[i] = new CircularBlockingByteQueue(((numPlayers * 6) * 4));

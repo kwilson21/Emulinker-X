@@ -17,7 +17,6 @@ import org.emulinker.kaillera.model.exception.DropGameException;
 
 public class DropGameAction implements V086Action, V086GameEventHandler {
    private static Log log = LogFactory.getLog(DropGameAction.class);
-   private static final String desc = "DropGameAction";
    private static DropGameAction singleton = new DropGameAction();
    private int actionCount = 0;
    private int handledCount = 0;

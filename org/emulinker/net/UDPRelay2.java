@@ -22,7 +22,7 @@ public abstract class UDPRelay2
 	protected boolean			started				= false;
 	protected boolean			stopFlag			= false;
 	protected Exception			exception;
-	protected Hashtable			relayThreads		= new Hashtable();
+	protected Hashtable<InetSocketAddress, RelayThread>			relayThreads		= new Hashtable<InetSocketAddress, RelayThread>();
 	protected Hashtable<Integer, DatagramChannel>			channels			= new Hashtable<Integer, DatagramChannel>();
 
 	public UDPRelay2(InetSocketAddress serverSocketAddress, int listenPort)
@@ -93,7 +93,7 @@ public abstract class UDPRelay2
 
 			stopFlag = true;
 
-			Enumeration e = relayThreads.elements();
+			Enumeration<RelayThread> e = relayThreads.elements();
 			while (e.hasMoreElements())
 			{
 				((RelayThread) e.nextElement()).close();

@@ -14,7 +14,6 @@ import org.emulinker.kaillera.model.exception.UserReadyException;
 
 public class UserReadyAction implements V086Action, V086GameEventHandler {
    private static Log log = LogFactory.getLog(UserReadyAction.class);
-   private static final String desc = "UserReadyAction";
    private static UserReadyAction singleton = new UserReadyAction();
    private int actionCount = 0;
    private int handledCount = 0;

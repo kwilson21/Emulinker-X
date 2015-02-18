@@ -1,19 +1,14 @@
 package org.emulinker.kaillera.model.impl;
 
 import java.util.*;
-import java.io.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.logging.*;
 import org.emulinker.kaillera.access.AccessManager;
-import org.emulinker.kaillera.controller.connectcontroller.protocol.ConnectMessage_HELLOD00D;
-import org.emulinker.kaillera.controller.messaging.MessageFormatException;
-import org.emulinker.kaillera.controller.v086.protocol.ServerACK;
 import org.emulinker.kaillera.master.StatsCollector;
 import org.emulinker.kaillera.model.*;
 import org.emulinker.kaillera.model.event.*;
 import org.emulinker.kaillera.model.exception.*;
-import org.emulinker.release.ReleaseInfo;
 import org.emulinker.util.*;
 
 public final class KailleraGameImpl implements KailleraGame
@@ -28,7 +23,6 @@ public final class KailleraGameImpl implements KailleraGame
 	private String                  lastAddress = "null";
 	private int						lastAddressCount = 0;
 	 
-	private static int              chatFloodTime = 3;
 	private int                     maxUsers = 16;
 	private int                     delay;
 	private String                  aEmulator = "any";

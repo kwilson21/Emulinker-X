@@ -11,7 +11,6 @@ import org.emulinker.kaillera.model.event.GameInfoEvent;
 
 public class GameInfoAction implements V086GameEventHandler {
    private static Log log = LogFactory.getLog(GameInfoAction.class);
-   private static final String desc = "GameInfoAction";
    private static GameInfoAction singleton = new GameInfoAction();
    private int handledCount = 0;
 

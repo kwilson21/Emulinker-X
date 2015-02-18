@@ -4,7 +4,6 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.*;
 
 import org.apache.commons.configuration.Configuration;
-import org.apache.commons.logging.*;
 
 public class EmuLinkerExecutor extends ThreadPoolExecutor
 {

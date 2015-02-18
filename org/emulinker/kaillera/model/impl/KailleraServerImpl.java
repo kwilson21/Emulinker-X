@@ -3,13 +3,10 @@ package org.emulinker.kaillera.model.impl;
 import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.concurrent.*;
-import java.text.*;
-
 import org.apache.commons.configuration.*;
 import org.apache.commons.logging.*;
 import org.emulinker.release.*;
 import org.emulinker.kaillera.access.AccessManager;
-import org.emulinker.kaillera.controller.v086.protocol.InformationMessage;
 import org.emulinker.kaillera.master.StatsCollector;
 import org.emulinker.kaillera.model.*;
 import org.emulinker.kaillera.model.event.*;

@@ -11,7 +11,6 @@ import org.emulinker.kaillera.model.exception.GameKickException;
 
 public class GameKickAction implements V086Action {
    private static Log log = LogFactory.getLog(GameKickAction.class);
-   private static final String desc = "GameKickAction";
    private static GameKickAction singleton = new GameKickAction();
    private int actionCount = 0;
 

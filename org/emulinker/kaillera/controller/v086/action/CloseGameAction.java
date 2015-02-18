@@ -11,7 +11,6 @@ import org.emulinker.kaillera.model.event.ServerEvent;
 
 public class CloseGameAction implements V086ServerEventHandler {
    private static Log log = LogFactory.getLog(CloseGameAction.class);
-   private static final String desc = "CloseGameAction";
    private static CloseGameAction singleton = new CloseGameAction();
    private int handledCount;
 

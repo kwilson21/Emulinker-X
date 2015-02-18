@@ -12,7 +12,6 @@ import org.emulinker.util.EmuLang;
 
 public class GameDesynchAction implements V086GameEventHandler {
    private static Log log = LogFactory.getLog(GameDesynchAction.class);
-   private static final String desc = "GameDesynchAction";
    private static GameDesynchAction singleton = new GameDesynchAction();
    private int handledCount = 0;
 

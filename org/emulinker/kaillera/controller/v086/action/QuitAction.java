@@ -17,7 +17,6 @@ import org.emulinker.kaillera.model.exception.ActionException;
 
 public class QuitAction implements V086Action, V086ServerEventHandler {
    private static Log log = LogFactory.getLog(QuitAction.class);
-   private static final String desc = "QuitAction";
    private static QuitAction singleton = new QuitAction();
    private int actionCount = 0;
    private int handledCount = 0;

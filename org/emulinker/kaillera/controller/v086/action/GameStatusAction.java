@@ -14,7 +14,6 @@ import org.emulinker.kaillera.model.event.ServerEvent;
 
 public class GameStatusAction implements V086ServerEventHandler {
    private static Log log = LogFactory.getLog(GameStatusAction.class);
-   private static final String desc = "GameStatusAction";
    private static GameStatusAction singleton = new GameStatusAction();
    private int handledCount = 0;
 

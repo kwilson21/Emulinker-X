@@ -23,7 +23,6 @@ import org.emulinker.util.EmuLang;
 
 public class CreateGameAction implements V086Action, V086ServerEventHandler {
    private static Log log = LogFactory.getLog(CreateGameAction.class);
-   private static final String desc = "CreateGameAction";
    private static CreateGameAction singleton = new CreateGameAction();
    private int actionCount = 0;
    private int handledCount = 0;
