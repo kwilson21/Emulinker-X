@@ -97,7 +97,7 @@ public class Trivia implements Runnable {
 		try
 		{
         	server.announce("<Unscramble> " + "Loading EmuXScramble Words...", false, null);
-        	server.announce("<Unscramble> " + "Loading Previous Scores...", false, null);
+        	
 			File file = new File("wordlist.txt");
 			Scanner scan = new Scanner(file);
 			
@@ -116,32 +116,14 @@ public class Trivia implements Runnable {
 				 
         	}
 			scan.close();
-		
+						
 
-		
-		
-			Random generator = new Random();
-			for (int j = 0; j <unscramblewords.size(); j++)
-			{
-				String tempword = unscramblewords.get(j);
-				char[] c = tempword.toCharArray();			
-				for (int k = 0; k < tempword.length(); k++)
-					{
-						int r = generator.nextInt(tempword.length());	//generate two random integers for place values
-						int q = generator.nextInt(tempword.length());
-						char temp = c[q];				//swap starts here
-						c[q] = c[r];			
-						c[r] = temp;
-					}		
-			String scrambledword = new String(c);
-			Questions tempQuestion = new Questions(scrambledword, unscramblewords.get(j).toString());
-			questions.add(tempQuestion);
-			questions_num.add(j);
 			
         	//##################
         	//######SCORES######
         	//##################
-
+			
+			server.announce("<Unscramble> " + "Loading Previous Scores...", false, null);
             InputStream ist = new FileInputStream("scores_scrambler.txt"); 
             BufferedReader istream = new BufferedReader(new InputStreamReader(ist));
             
@@ -165,6 +147,25 @@ public class Trivia implements Runnable {
         	
 
         	ist.close();
+        	
+			Random generator = new Random();
+			for (int j = 0; j <unscramblewords.size(); j++)
+			{
+				String tempword = unscramblewords.get(j);
+				char[] c = tempword.toCharArray();			
+				for (int k = 0; k < tempword.length(); k++)
+					{
+						int r = generator.nextInt(tempword.length());	//generate two random integers for place values
+						int q = generator.nextInt(tempword.length());
+						char temp = c[q];				//swap starts here
+						c[q] = c[r];			
+						c[r] = temp;
+					}		
+			String scrambledword = new String(c);
+			Questions tempQuestion = new Questions(scrambledword, unscramblewords.get(j).toString());
+			questions.add(tempQuestion);
+			questions_num.add(j);
+        	
         	}
         	server.announce("<Unscramble> " + questions.size() + " words have been loaded!", false, null);
         	server.announce("<Unscramble> " + scores.size() + " scores have been loaded!", false, null);
