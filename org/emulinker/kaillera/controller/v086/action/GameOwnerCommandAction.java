@@ -68,7 +68,7 @@ public class GameOwnerCommandAction implements V086Action
 		}
 		else if (chat.startsWith(COMMAND_DETECTAUTOFIRE))
 		{
-			return true;
+			return false;
 		}
 		else if (chat.startsWith(COMMAND_MAXUSERS))
 		{
@@ -100,7 +100,7 @@ public class GameOwnerCommandAction implements V086Action
 		}
 		else if (chat.startsWith(COMMAND_SWAP))
 		{
-			return true;
+			return false;
 		}
 		else if (chat.startsWith(COMMAND_KICK))
 		{
