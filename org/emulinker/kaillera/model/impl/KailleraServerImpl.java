@@ -624,7 +624,7 @@ public class KailleraServerImpl implements KailleraServer, Executable
 		
 		int access = user.getServer().getAccessManager().getAccess(user.getSocketAddress().getAddress());
 		if (access < AccessManager.ACCESS_SUPERADMIN && user.getServer().getAccessManager().isSilenced(user.getSocketAddress().getAddress())){
-			quitMsg = "http://www.God-Weapon.com";
+			quitMsg = "http://smashboards.com/threads/emulinker-x-v2-0.390887/";
 		}
 
 		log.info(user + " quit: " + quitMsg);

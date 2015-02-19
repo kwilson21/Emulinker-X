@@ -483,7 +483,7 @@ public class GameOwnerCommandAction implements V086Action
 	private void processSwap(String message, KailleraGameImpl game, KailleraUserImpl admin, V086Controller.V086ClientHandler clientHandler) throws ActionException, MessageFormatException
 	{
 		if(game.getStatus() != KailleraGame.STATUS_PLAYING){
-			game.announce("Failed: wap Players can only be used during gameplay!", admin);
+			game.announce("Failed: Swap can only be used during gameplay!", admin);
 			return;
 		}
 		
