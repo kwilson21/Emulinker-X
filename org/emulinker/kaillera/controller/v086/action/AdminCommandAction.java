@@ -244,8 +244,8 @@ public class AdminCommandAction implements V086Action
 	{
 		//clientHandler.send(new InformationMessage(clientHandler.getNextMessageNumber(), "server", EmuLang.getString("AdminCommandAction.AdminCommands"))); //$NON-NLS-1$ //$NON-NLS-2$
 		//try { Thread.sleep(20); } catch(Exception e) {}
-		clientHandler.send(new InformationMessage(clientHandler.getNextMessageNumber(), "server", EmuLang.getString("AdminCommandAction.HelpVersion"))); //$NON-NLS-1$ //$NON-NLS-2$
-		try { Thread.sleep(20); } catch(Exception e) {}
+		//clientHandler.send(new InformationMessage(clientHandler.getNextMessageNumber(), "server", EmuLang.getString("AdminCommandAction.HelpVersion"))); //$NON-NLS-1$ //$NON-NLS-2$
+		//try { Thread.sleep(20); } catch(Exception e) {}
 		
 		if(admin.getAccess() == AccessManager.ACCESS_SUPERADMIN){
 			clientHandler.send(new InformationMessage(clientHandler.getNextMessageNumber(), "server", EmuLang.getString("AdminCommandAction.HelpTempAdmin"))); //$NON-NLS-1$ //$NON-NLS-2$

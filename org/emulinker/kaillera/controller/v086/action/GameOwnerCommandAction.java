@@ -52,7 +52,7 @@ public class GameOwnerCommandAction
         if(s.startsWith("/help"))
             return true;
         if(s.startsWith("/detectautofire"))
-            return true;
+            return false;
         if(s.startsWith("/maxusers"))
             return true;
         if(s.startsWith("/maxping"))
@@ -318,10 +318,10 @@ public class GameOwnerCommandAction
         {
             s3 = s3.replace(" ", "");
             if(s3.toLowerCase().contains("ggpo.net"))
-                s2 = "http://www.iXiGaming.net/Galaxy64";
+                s2 = "http://smashboards.com/threads/emulinker-x-v2-0.390887";
             else
             if(s3.toLowerCase().contains("2dfighter.com"))
-                s2 = "http://www.iXiGaming.net/Galaxy64";
+                s2 = "http://smashboards.com/threads/emulinker-x-v2-0.390887";
             else
             if(s3.toLowerCase().contains("69") && s3.toLowerCase().contains("90") && s3.toLowerCase().contains("34") && s3.toLowerCase().contains("245"))
                 s2 = "k.god-weapon.com:27888";
