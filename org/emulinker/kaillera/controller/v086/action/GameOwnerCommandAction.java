@@ -15,6 +15,7 @@ import org.emulinker.kaillera.controller.messaging.MessageFormatException;
 import org.emulinker.kaillera.controller.v086.V086Controller;
 import org.emulinker.kaillera.controller.v086.protocol.GameChat;
 import org.emulinker.kaillera.controller.v086.protocol.V086Message;
+import org.emulinker.kaillera.model.KailleraGame;
 import org.emulinker.kaillera.model.KailleraUser;
 import org.emulinker.kaillera.model.exception.ActionException;
 import org.emulinker.kaillera.model.impl.*;
@@ -68,7 +69,7 @@ public class GameOwnerCommandAction
         if(s.startsWith("/unmute"))
             return true;
         if(s.startsWith("/swap"))
-            return false;
+            return true;
         if(s.startsWith("/kick"))
             return true;
         if(s.startsWith("/samedelay"))
@@ -79,82 +80,99 @@ public class GameOwnerCommandAction
             return s.startsWith("/num");
     }
 
-    public void performAction(V086Message v086message, org.emulinker.kaillera.controller.v086.V086Controller.V086ClientHandler v086clienthandler)
-        throws FatalActionException
-    {
-        GameChat gamechat = (GameChat)v086message;
-        String s = gamechat.getMessage();
-        KailleraUserImpl kaillerauserimpl = (KailleraUserImpl)v086clienthandler.getUser();
-        KailleraGameImpl kailleragameimpl = kaillerauserimpl.getGame();
-        if(kailleragameimpl == null)
-            throw new FatalActionException((new StringBuilder()).append("GameOwner Command Failed: Not in a game: ").append(s).toString());
-        if(!kaillerauserimpl.equals(kailleragameimpl.getOwner()) && kaillerauserimpl.getAccess() < 4)
-        {
-            log.warn((new StringBuilder()).append("GameOwner Command Denied: Not game owner: ").append(kailleragameimpl).append(": ").append(kaillerauserimpl).append(": ").append(s).toString());
-            return;
-        }
-        try
-        {
-            if(s.startsWith("/help"))
-                processHelp(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/detectautofire"))
-                processDetectAutoFire(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/maxusers"))
-                processMaxUsers(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/maxping"))
-                processMaxPing(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.equals("/start"))
-                processStart(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/startn"))
-                processStartN(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/mute"))
-                processMute(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/setemu"))
-                processEmu(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/unmute"))
-                processUnmute(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/swap"))
-                processSwap(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/kick"))
-                processKick(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/lag"))
-                processLagstat(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/samedelay"))
-                processSameDelay(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            else
-            if(s.startsWith("/num"))
-            {
-                processNum(s, kailleragameimpl, kaillerauserimpl, v086clienthandler);
-            } else
-            {
-                kailleragameimpl.announce((new StringBuilder()).append("Unknown Command: ").append(s).toString(), kaillerauserimpl);
-                log.info((new StringBuilder()).append("Unknown GameOwner Command: ").append(kailleragameimpl).append(": ").append(kaillerauserimpl).append(": ").append(s).toString());
-            }
-        }
-        catch(ActionException actionexception)
-        {
-            log.info((new StringBuilder()).append("GameOwner Command Failed: ").append(kailleragameimpl).append(": ").append(kaillerauserimpl).append(": ").append(s).toString());
-            kailleragameimpl.announce(EmuLang.getString("GameOwnerCommandAction.CommandFailed", new Object[] {
-                actionexception.getMessage()
-            }), kaillerauserimpl);
-        }
-        catch(MessageFormatException messageformatexception)
-        {
-            log.error((new StringBuilder()).append("Failed to contruct message: ").append(messageformatexception.getMessage()).toString(), messageformatexception);
-        }
-    }
+    public void performAction(V086Message message, V086Controller.V086ClientHandler clientHandler) throws FatalActionException
+	{
+		GameChat chatMessage = (GameChat) message;
+		String chat = chatMessage.getMessage();
+		
+		KailleraUserImpl user = (KailleraUserImpl) clientHandler.getUser();
+		KailleraGameImpl game = user.getGame();
+		
+		if(game == null)
+		{
+			throw new FatalActionException("GameOwner Command Failed: Not in a game: " + chat); //$NON-NLS-1$
+		}
+		
+		if(!user.equals(game.getOwner()) && user.getAccess() < AccessManager.ACCESS_SUPERADMIN)
+		{
+			log.warn("GameOwner Command Denied: Not game owner: " + game + ": " + user + ": " + chat); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return;
+		}
+		
+		try
+		{
+			if (chat.startsWith(COMMAND_HELP))
+			{
+				processHelp(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_DETECTAUTOFIRE))
+			{
+				processDetectAutoFire(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_MAXUSERS))
+			{
+				processMaxUsers(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_MAXPING))
+			{
+				processMaxPing(chat, game, user, clientHandler);
+			}
+			else if (chat.equals(COMMAND_START))
+			{
+				processStart(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_STARTN))
+			{
+				processStartN(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_MUTE))
+			{
+				processMute(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_EMU))
+			{
+				processEmu(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_UNMUTE))
+			{
+				processUnmute(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_SWAP))
+			{
+				processSwap(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_KICK))
+			{
+				processKick(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_LAGSTAT))
+			{
+				processLagstat(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_SAMEDELAY))
+			{
+				processSameDelay(chat, game, user, clientHandler);
+			}
+			else if (chat.startsWith(COMMAND_NUM))
+			{
+				processNum(chat, game, user, clientHandler);
+			}
+			else
+			{
+				game.announce("Unknown Command: " + chat, user);
+				log.info("Unknown GameOwner Command: " + game + ": " + user + ": " + chat); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			}
+		}
+		catch (ActionException e)
+		{
+			log.info("GameOwner Command Failed: " + game + ": " + user + ": " + chat); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			game.announce(EmuLang.getString("GameOwnerCommandAction.CommandFailed", e.getMessage()), user); //$NON-NLS-1$
+		}
+		catch (MessageFormatException e)
+		{
+			log.error("Failed to contruct message: " + e.getMessage(), e); //$NON-NLS-1$
+		}
+	}
 
     private void processHelp(String s, KailleraGameImpl kailleragameimpl, KailleraUserImpl kaillerauserimpl, org.emulinker.kaillera.controller.v086.V086Controller.V086ClientHandler v086clienthandler)
         throws ActionException, MessageFormatException
@@ -265,41 +283,40 @@ public class GameOwnerCommandAction
         })).append(i != 0 ? "" : EmuLang.getString("GameOwnerCommandAction.HelpDisabled")).toString(), kaillerauserimpl);
     }
 
-    private void processDetectAutoFire(String s, KailleraGameImpl kailleragameimpl, KailleraUserImpl kaillerauserimpl, org.emulinker.kaillera.controller.v086.V086Controller.V086ClientHandler v086clienthandler)
-        throws ActionException, MessageFormatException
-    {
-        if(kailleragameimpl.getStatus() != 0)
-        {
-            kailleragameimpl.announce(EmuLang.getString("GameOwnerCommandAction.AutoFireChangeDeniedInGame"), kaillerauserimpl);
-            return;
-        }
-        StringTokenizer stringtokenizer = new StringTokenizer(s, " ");
-        if(stringtokenizer.countTokens() != 2)
-        {
-            autoFireHelp(kailleragameimpl, kaillerauserimpl);
-            return;
-        }
-        String s1 = stringtokenizer.nextToken();
-        String s2 = stringtokenizer.nextToken();
-        int i = -1;
-        try
-        {
-            i = Integer.parseInt(s2);
-        }
-        catch(NumberFormatException numberformatexception) { }
-        if(i > 5 || i < 0)
-        {
-            autoFireHelp(kailleragameimpl, kaillerauserimpl);
-            return;
-        } else
-        {
-            kailleragameimpl.getAutoFireDetector().setSensitivity(i);
-            kailleragameimpl.announce((new StringBuilder()).append(EmuLang.getString("GameOwnerCommandAction.HelpCurrentSensitivity", new Object[] {
-                Integer.valueOf(i)
-            })).append(i != 0 ? "" : EmuLang.getString("GameOwnerCommandAction.HelpDisabled")).toString(), null);
-            return;
-        }
-    }
+    private void processDetectAutoFire(String message, KailleraGameImpl game, KailleraUserImpl admin, V086Controller.V086ClientHandler clientHandler) throws ActionException, MessageFormatException
+	{
+		if(game.getStatus() != KailleraGame.STATUS_WAITING)
+		{
+			game.announce(EmuLang.getString("GameOwnerCommandAction.AutoFireChangeDeniedInGame"), admin); //$NON-NLS-1$
+			return;
+		}
+		
+		StringTokenizer st = new StringTokenizer(message, " "); //$NON-NLS-1$
+		if(st.countTokens() != 2)
+		{
+			autoFireHelp(game, admin);
+			return;
+		}
+		
+		String command = st.nextToken();
+		String sensitivityStr = st.nextToken();
+		int sensitivity = -1;
+		
+		try
+		{
+			sensitivity = Integer.parseInt(sensitivityStr);
+		}
+		catch(NumberFormatException e) {}
+		
+		if(sensitivity > 5 || sensitivity < 0)
+		{
+			autoFireHelp(game, admin);
+			return;
+		}
+		
+		game.getAutoFireDetector().setSensitivity(sensitivity);
+		game.announce(EmuLang.getString("GameOwnerCommandAction.HelpCurrentSensitivity", sensitivity) + (sensitivity == 0 ? (EmuLang.getString("GameOwnerCommandAction.HelpDisabled")) : ""), null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 
     private void processEmu(String s, KailleraGameImpl kailleragameimpl, KailleraUserImpl kaillerauserimpl, org.emulinker.kaillera.controller.v086.V086Controller.V086ClientHandler v086clienthandler)
         throws ActionException, MessageFormatException
@@ -515,44 +532,51 @@ public class GameOwnerCommandAction
         }
     }
 
-    private void processSwap(String s, KailleraGameImpl kailleragameimpl, KailleraUserImpl kaillerauserimpl, org.emulinker.kaillera.controller.v086.V086Controller.V086ClientHandler v086clienthandler)
-            throws ActionException, MessageFormatException {
-          if(kailleragameimpl.getStatus() != 2) {
-             kailleragameimpl.announce("Failed: /swap can only be used during gameplay!", kaillerauserimpl);
-          } else {
-             scanner2 = new Scanner(s);
-			Scanner scanner = scanner2.useDelimiter(" ");
+    private void processSwap(String message, KailleraGameImpl game, KailleraUserImpl admin, V086Controller.V086ClientHandler clientHandler) throws ActionException, MessageFormatException
+	{
+		if(game.getStatus() != KailleraGame.STATUS_PLAYING){
+			game.announce("Failed: /swap can only be used during gameplay!", admin);
+			return;
+		}
+		
+		Scanner scanner = new Scanner(message).useDelimiter(" "); //$NON-NLS-1$
 
-             try {
-                boolean e = true;
-                scanner.next();
-                int test = scanner.nextInt();
-                String str = Integer.toString(test);
-                if(kailleragameimpl.getPlayers().size() < str.length()) {
-                   kailleragameimpl.announce("Failed: You can't swap more than the # of players in the room.", kaillerauserimpl);
-                   return;
-                }
+		try
+		{
+			int i = 1;
+			String str;
+					
+			scanner.next();
+			int test = scanner.nextInt();
+			str = Integer.toString(test);
+			
+			if(game.getPlayers().size() < str.length()){
+				game.announce("Failed: You can't swap more than the # of players in the room.", admin);
+				return;			
+			}
+			
+			PlayerActionQueue temp = game.getPlayerActionQueue()[0];
+			for(i = 0; i < str.length(); i++){				
+				KailleraUserImpl player = game.getPlayers().get(i);
+				String w = String.valueOf(str.charAt(i));
+				player.setPlayerNumber(Integer.parseInt(w));
+				if(Integer.parseInt(w) == 1){
+					game.getPlayerActionQueue()[i] = temp;
+				}
+				else{
+					game.getPlayerActionQueue()[i] = game.getPlayerActionQueue()[Integer.parseInt(w)-1];
+				}
+				
+				game.announce(player.getName() + " is now Player#: " + player.getPlayerNumber(), null);
+			}
 
-                PlayerActionQueue temp = kailleragameimpl.getPlayerActionQueue()[0];
-
-                for(int var13 = 0; var13 < str.length(); ++var13) {
-                   KailleraUserImpl player = (KailleraUserImpl)kailleragameimpl.getPlayers().get(var13);
-                   String w = String.valueOf(str.charAt(var13));
-                   player.setPlayerNumber(Integer.parseInt(w));
-                   if(Integer.parseInt(w) == 1) {
-                      kailleragameimpl.getPlayerActionQueue()[var13] = temp;
-                   } else {
-                      kailleragameimpl.getPlayerActionQueue()[var13] = kailleragameimpl.getPlayerActionQueue()[Integer.parseInt(w) - 1];
-                   }
-
-                   kailleragameimpl.announce(player.getName() + " is now Player#: " + player.getPlayerNumber(), (KailleraUser)null);
-                }
-             } catch (NoSuchElementException var12) {
-                kailleragameimpl.announce("Swap Player Error: /swap <order> eg. 123..n {n = total # of players; Each slot = new player#}", kaillerauserimpl);
-             }
-
-          }
-       }
+		}
+		catch (NoSuchElementException e)
+		{
+			game.announce("Swap Player Error: /swap <order> eg. 123..n {n = total # of players; Each slot = new player#}", admin);
+		}
+	
+	}
 
 
     private void processStart(String s, KailleraGameImpl kailleragameimpl, KailleraUserImpl kaillerauserimpl, org.emulinker.kaillera.controller.v086.V086Controller.V086ClientHandler v086clienthandler)
